@@ -1,16 +1,11 @@
-import { config, https } from "firebase-functions";
-import Zaim from "zaim";
+import * as functions from "firebase-functions";
+import { fetchPayments } from "./zaim";
 
-const zaimConfig = config().zaim;
-
-const zaim = new Zaim({
-  consumerKey: zaimConfig.key as string,
-  consumerSecret: zaimConfig.secret as string,
-  accessToken: zaimConfig.token as string,
-  accessTokenSecret: zaimConfig.token_secret as string,
-});
-
-export const helloWorld = https.onRequest(async (_, response) => {
-  const userInfo = await zaim.verify();
-  response.json({ data: JSON.parse(userInfo) });
+export const helloWorld = functions.https.onRequest(async (_, response) => {
+  const payments = await fetchPayments(
+    new Date("2020/11/01"),
+    new Date("2020/11/30"),
+    "公費"
+  );
+  response.json({ data: payments });
 });

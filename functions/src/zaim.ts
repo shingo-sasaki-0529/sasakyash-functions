@@ -1,25 +1,56 @@
 import { config } from 'firebase-functions'
 import { Money, MoneyType, PaymentType } from './types'
 import Zaim from 'zaim'
+import * as dayjs from 'dayjs'
 
-const zaimConfig = config().zaim
+type Dayjs = dayjs.Dayjs
+const Config = config().zaim
+const PrivateBudget = Number(Config.private_budget)
+const PublicBudget = Number(Config.public_budget)
+
 const zaim = new Zaim({
-  consumerKey: zaimConfig.key as string,
-  consumerSecret: zaimConfig.secret as string,
-  accessToken: zaimConfig.token as string,
-  accessTokenSecret: zaimConfig.token_secret as string
+  consumerKey: Config.key as string,
+  consumerSecret: Config.secret as string,
+  accessToken: Config.token as string,
+  accessTokenSecret: Config.token_secret as string
 })
 
-export const fetchMoneyList = async (startDate: Date, endDate: Date, mode: MoneyType) => {
+/**
+ * 支払いまたは収入の一覧をAPIから取得する
+ */
+const fetchMoneyList = async (startDate: Dayjs, endDate: Dayjs, mode: MoneyType) => {
   const responseData = await zaim.getMoney({
-    start_date: startDate.toISOString().split('T')[0],
-    end_date: endDate.toISOString().split('T')[0],
+    start_date: startDate.format('YYYY-MM-DD'),
+    end_date: endDate.format('YYYY-MM-DD'),
     mode: mode
   })
   return JSON.parse(responseData)['money'] as Money[]
 }
 
-export const fetchPayments = async (startDate: Date, endDate: Date, paymentType: PaymentType) => {
+/**
+ * 支払いの一覧を取得し、公費または私費で絞り込む
+ */
+const fetchPayments = async (startDate: Dayjs, endDate: Dayjs, paymentType: PaymentType) => {
   const payments = await fetchMoneyList(startDate, endDate, 'payment')
   return payments.filter(payment => payment.comment.indexOf(paymentType) >= 0)
+}
+
+/**
+ * 公費または私費の総支払額を取得する
+ */
+const fetchTotalPaidAmount = async (startDate: Dayjs, endDate: Dayjs, paymentType: PaymentType) => {
+  const payments = await fetchPayments(startDate, endDate, paymentType)
+  return payments.reduce((total, payment) => total + payment.amount, 0)
+}
+
+/**
+ * 今月の公費または私費の予算残額を取得する
+ */
+export const fetchCurrentBalance = async (year: number, month: number, paymentType: PaymentType) => {
+  const day = dayjs().year(year).month(month)
+  const currentMonthFrom = day.startOf('month')
+  const currentMonthTo = day.endOf('month')
+  const totalPaidAmount = await fetchTotalPaidAmount(currentMonthFrom, currentMonthTo, paymentType)
+  const budget = paymentType === '公費' ? PublicBudget : PrivateBudget
+  return budget - totalPaidAmount
 }

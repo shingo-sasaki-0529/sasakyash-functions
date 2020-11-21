@@ -1,14 +1,16 @@
-import * as functions from "firebase-functions";
+import { config, https } from "firebase-functions";
 import Zaim from "zaim";
 
+const zaimConfig = config().zaim;
+
 const zaim = new Zaim({
-  consumerKey: process.env.ZAIM_KEY as string,
-  consumerSecret: process.env.ZAIM_SECRET as string,
-  accessToken: process.env.ZAIM_TOKEN as string,
-  accessTokenSecret: process.env.ZAIM_TOKEN_SECRET as string,
+  consumerKey: zaimConfig.key as string,
+  consumerSecret: zaimConfig.secret as string,
+  accessToken: zaimConfig.token as string,
+  accessTokenSecret: zaimConfig.token_secret as string,
 });
 
-export const helloWorld = functions.https.onRequest(async (_, response) => {
+export const helloWorld = https.onRequest(async (_, response) => {
   const userInfo = await zaim.verify();
   response.json({ data: JSON.parse(userInfo) });
 });

@@ -1887,6 +1887,11 @@ normalize-package-data@^2.3.2:
     semver "2 || 3 || 4 || 5"
     validate-npm-package-license "^3.0.1"
 
+oauth@*:
+  version "0.9.15"
+  resolved "https://registry.yarnpkg.com/oauth/-/oauth-0.9.15.tgz#bd1fefaf686c96b75475aed5196412ff60cfb9c1"
+  integrity sha1-vR/vr2hslrdUda7VGWQS/2DPucE=
+
 object-assign@^4:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
@@ -2690,3 +2695,10 @@ yargs@^15.3.1:
     which-module "^2.0.0"
     y18n "^4.0.0"
     yargs-parser "^18.1.2"
+
+zaim@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/zaim/-/zaim-2.2.0.tgz#e221538ef4d4bdd9353ab6ee0744063dc58322f0"
+  integrity sha512-dIVHIuQpuX53yNtElz86oFG4cMuOuTH7wrC96216HA6BURVQXIRZ4hPq+N3CsRQOrYYXjsMENi8WxexFmb99nA==
+  dependencies:
+    oauth "*"

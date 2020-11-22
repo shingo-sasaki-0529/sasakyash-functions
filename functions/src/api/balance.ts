@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions'
-import { fetchCurrentBalance } from './zaim'
+import { fetchCurrentBalance } from '../zaim'
 import * as dayjs from 'dayjs'
 const cors = require('cors')({ origin: true })
 

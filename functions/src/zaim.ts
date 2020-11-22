@@ -61,7 +61,7 @@ export const fetchCurrentBalance = async (year: number, month: number, paymentTy
   return budget - totalPaidAmount
 }
 
-export const fetchDailyPaymentAmount = async (startDate: Dayjs, endDate: Dayjs) => {
+export const fetchDailyPaymentAmounts = async (startDate: Dayjs, endDate: Dayjs) => {
   const allPaymentList = await fetchPaymentList(startDate, endDate)
   const privatePaymentList = allPaymentList.filterBy('private')
   const publicPaymentList = allPaymentList.filterBy('public')

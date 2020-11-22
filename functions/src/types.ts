@@ -1,5 +1,5 @@
 export type MoneyType = 'income' | 'payment'
-export type PaymentType = '公費' | '私費'
+export type PaymentType = 'public' | 'private'
 export interface Money {
   id: number
   user_id: number

@@ -32,7 +32,8 @@ const fetchMoneyList = async (startDate: Dayjs, endDate: Dayjs, mode: MoneyType)
  */
 const fetchPayments = async (startDate: Dayjs, endDate: Dayjs, paymentType: PaymentType) => {
   const payments = await fetchMoneyList(startDate, endDate, 'payment')
-  return payments.filter(payment => payment.comment.indexOf(paymentType) >= 0)
+  const filteringComment = paymentType === 'private' ? '私費' : '公費'
+  return payments.filter(payment => payment.comment.indexOf(filteringComment) >= 0)
 }
 
 /**
@@ -51,6 +52,6 @@ export const fetchCurrentBalance = async (year: number, month: number, paymentTy
   const currentMonthFrom = day.startOf('month')
   const currentMonthTo = day.endOf('month')
   const totalPaidAmount = await fetchTotalPaidAmount(currentMonthFrom, currentMonthTo, paymentType)
-  const budget = paymentType === '公費' ? PublicBudget : PrivateBudget
+  const budget = paymentType === 'private' ? PrivateBudget : PublicBudget
   return budget - totalPaidAmount
 }

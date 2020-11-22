@@ -10,9 +10,7 @@ export default functions.https.onRequest(async (request, response) => {
 
   cors(request, response, () => {
     response.json({
-      data: {
-        dailyPaymentAmounts
-      }
+      data: dailyPaymentAmounts
     })
   })
 })

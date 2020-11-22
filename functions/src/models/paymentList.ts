@@ -3,7 +3,7 @@ import { dateRange } from '../utils/date'
 import { Money, PaymentType } from '../types'
 
 export class PaymentList {
-  constructor(private payments: Money[]) {}
+  constructor(public payments: Money[]) {}
 
   /**
    * 公費または私費で絞り込む

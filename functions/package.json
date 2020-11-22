@@ -5,7 +5,7 @@
     "lint": "eslint \"src/**/*\"",
     "build": "tsc",
     "watch": "tsc --watch",
-    "test": "yarn jest",
+    "test": "yarn jest --verbose",
     "serve": "yarn build && firebase emulators:start --only functions",
     "shell": "yarn build && firebase functions:shell",
     "start": "yarn shell",

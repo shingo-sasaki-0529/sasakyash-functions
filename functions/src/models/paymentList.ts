@@ -10,8 +10,11 @@ export class PaymentList {
    */
   filterBy(type: PaymentType) {
     const paymentTypeComment = type === 'private' ? '私費' : '公費'
-    this.payments = this.payments.filter(payment => payment.comment.indexOf(paymentTypeComment) >= 0)
-    return this
+    return new PaymentList(
+      this.payments.filter(payment => {
+        return payment.comment.indexOf(paymentTypeComment) >= 0
+      })
+    )
   }
 
   /**

@@ -2,6 +2,7 @@ import { config } from 'firebase-functions'
 import { Money, MoneyType, PaymentType } from './types'
 import Zaim from 'zaim'
 import * as dayjs from 'dayjs'
+import { PaymentList } from './models/paymentList'
 
 type Dayjs = dayjs.Dayjs
 const Config = config().zaim
@@ -30,18 +31,18 @@ const fetchMoneyList = async (startDate: Dayjs, endDate: Dayjs, mode: MoneyType)
 /**
  * 支払いの一覧を取得し、公費または私費で絞り込む
  */
-const fetchPayments = async (startDate: Dayjs, endDate: Dayjs, paymentType: PaymentType) => {
+const fetchPaymentList = async (startDate: Dayjs, endDate: Dayjs, paymentType: PaymentType) => {
   const payments = await fetchMoneyList(startDate, endDate, 'payment')
-  const filteringComment = paymentType === 'private' ? '私費' : '公費'
-  return payments.filter(payment => payment.comment.indexOf(filteringComment) >= 0)
+  const paymentList = new PaymentList(payments)
+  return paymentList.filterBy(paymentType)
 }
 
 /**
  * 公費または私費の総支払額を取得する
  */
 const fetchTotalPaidAmount = async (startDate: Dayjs, endDate: Dayjs, paymentType: PaymentType) => {
-  const payments = await fetchPayments(startDate, endDate, paymentType)
-  return payments.reduce((total, payment) => total + payment.amount, 0)
+  const paymentList = await fetchPaymentList(startDate, endDate, paymentType)
+  return paymentList.totalAmount()
 }
 
 /**

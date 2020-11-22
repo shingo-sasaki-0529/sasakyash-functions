@@ -1,4 +1,5 @@
 import { Dayjs } from 'dayjs'
+import { dateRange } from '../utils/date'
 import { Money, PaymentType } from '../types'
 
 export class PaymentList {
@@ -25,15 +26,9 @@ export class PaymentList {
    * { '2020-10-01': 1000, '2020-10-02': 2000, ... '2020-10-31': 3000}
    */
   amountsByDate(startDate: Dayjs, endDate: Dayjs) {
-    // 開始から終了日までの日付一覧を連想配列化
     const amountTable: { [formattedDate: string]: number } = {}
-    let iterateDate = startDate
-    while (iterateDate.unix() <= endDate.unix()) {
-      amountTable[iterateDate.format('YYYY-MM-DD')] = 0
-      iterateDate = iterateDate.add(1, 'day')
-    }
+    dateRange(startDate, endDate).forEach(date => (amountTable[date.format('YYYY-MM-DD')] = 0))
 
-    // 支払い一覧から、連想配列に支払額を加算していく
     this.payments.forEach(payment => {
       if (amountTable[payment.date] !== undefined) {
         amountTable[payment.date] += payment.amount

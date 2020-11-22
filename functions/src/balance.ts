@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions'
 import { fetchCurrentBalance } from './zaim'
 import * as dayjs from 'dayjs'
+const cors = require('cors')({ origin: true })
 
 export default functions.https.onRequest(async (request, response) => {
   const year = request.query.year ? Number(request.query.year) : dayjs().year()
@@ -8,10 +9,13 @@ export default functions.https.onRequest(async (request, response) => {
 
   const privateBalance = await fetchCurrentBalance(year, month, 'private')
   const publicBalance = await fetchCurrentBalance(year, month, 'public')
-  response.json({
-    data: {
-      private: privateBalance,
-      public: publicBalance
-    }
+
+  cors(request, response, () => {
+    response.json({
+      data: {
+        private: privateBalance,
+        public: publicBalance
+      }
+    })
   })
 })

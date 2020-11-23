@@ -63,5 +63,9 @@ export const fetchDailyPaymentAmounts = async (
   paymentType: PaymentType
 ) => {
   const paymentList = await fetchPaymentList(startDate, endDate, paymentType)
-  return paymentList.amountsByDate(startDate, endDate)
+  const amountsByDate = paymentList.amountsByDate(startDate, endDate)
+  return {
+    days: Object.keys(amountsByDate),
+    amounts: Object.values(amountsByDate)
+  }
 }

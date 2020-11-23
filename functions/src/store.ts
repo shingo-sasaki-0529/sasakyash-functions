@@ -1,16 +1,18 @@
 import * as admin from 'firebase-admin'
 
 admin.initializeApp()
-const db = admin.firestore()
+const firestore = admin.firestore()
 
-const read = async (collectionName: string, key: string) => {
-  const snapshot = await db.collection(collectionName).doc(key).get()
-  const storedData = snapshot.data()
-  return storedData?.result || null
+export default class Store {
+  constructor(private collectionName: string, private key: string) {}
+
+  async read() {
+    const snapshot = await firestore.collection(this.collectionName).doc(this.key).get()
+    const storedData = snapshot.data()
+    return storedData?.result || null
+  }
+
+  async write(resultValue: any) {
+    await firestore.collection(this.collectionName).doc(this.key).set({ result: resultValue })
+  }
 }
-
-const write = async (collectionName: string, key: string, resultValue: any) => {
-  await db.collection(collectionName).doc(key).set({ result: resultValue })
-}
-
-export default { read, write }

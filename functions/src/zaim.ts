@@ -2,6 +2,7 @@ import { config } from 'firebase-functions'
 import { Money } from './types'
 import Zaim from 'zaim'
 import * as dayjs from 'dayjs'
+import db from './store'
 import { PaymentList } from './models/paymentList'
 
 type Dayjs = dayjs.Dayjs
@@ -13,10 +14,6 @@ const zaim = new Zaim({
   accessToken: Config.token as string,
   accessTokenSecret: Config.token_secret as string
 })
-
-const firebaseAdmin = require('firebase-admin')
-firebaseAdmin.initializeApp()
-const db = firebaseAdmin.firestore()
 
 /**
  * 支払い一覧をAPIから取得する
@@ -30,13 +27,10 @@ export const fetchPaymentList = async (startDate: Dayjs, endDate: Dayjs) => {
   }
   const serializedParams = JSON.stringify(params)
 
-  // リクエストパラメータを元に、キャッシュの有無を確認する
-  const cache = await db.collection('zaim-get-money-cache').doc(serializedParams).get()
-  const cachedData = cache.data()
-
   // キャッシュがある場合はそれをモデル化してそのまま返却する
+  const cachedData = await db.read('zaim-get-money-cache', serializedParams)
   if (cachedData) {
-    return new PaymentList(cachedData.result)
+    return new PaymentList(cachedData)
   }
 
   // キャッシュがないので Zaim API を呼び出し、レスポンスをパースする
@@ -44,7 +38,7 @@ export const fetchPaymentList = async (startDate: Dayjs, endDate: Dayjs) => {
   const rawPaymentList = JSON.parse(responseData)['money'] as Money[]
 
   // キャッシュを新規作成する
-  await db.collection('zaim-get-money-cache').doc(serializedParams).set({ result: rawPaymentList })
+  await db.write('zaim-get-money-cache', serializedParams, rawPaymentList)
 
   // モデル化して返却する
   return new PaymentList(rawPaymentList)

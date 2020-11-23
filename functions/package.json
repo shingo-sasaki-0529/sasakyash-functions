@@ -6,7 +6,7 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "test": "yarn jest --verbose",
-    "serve": "yarn build && firebase emulators:start --only functions",
+    "serve": "yarn build && firebase emulators:start",
     "shell": "yarn build && firebase functions:shell",
     "start": "yarn shell",
     "deploy": "firebase deploy --only functions",

@@ -1,5 +1,5 @@
 import { config } from 'firebase-functions'
-import { Money, MoneyType, PaymentType } from './types'
+import { Money, PaymentType } from './types'
 import Zaim from 'zaim'
 import * as dayjs from 'dayjs'
 import { PaymentList } from './models/paymentList'
@@ -17,31 +17,23 @@ const zaim = new Zaim({
 })
 
 /**
- * 支払いまたは収入の一覧をAPIから取得する
+ * 支払い一覧をAPIから取得する
  */
-const fetchMoneyList = async (startDate: Dayjs, endDate: Dayjs, mode: MoneyType) => {
+export const fetchPaymentList = async (startDate: Dayjs, endDate: Dayjs) => {
   const responseData = await zaim.getMoney({
     start_date: startDate.format('YYYY-MM-DD'),
     end_date: endDate.format('YYYY-MM-DD'),
-    mode: mode
+    mode: 'payment'
   })
-  return JSON.parse(responseData)['money'] as Money[]
-}
-
-/**
- * 支払いの一覧を取得し、公費または私費で絞り込む
- */
-const fetchPaymentList = async (startDate: Dayjs, endDate: Dayjs, paymentType: PaymentType) => {
-  const payments = await fetchMoneyList(startDate, endDate, 'payment')
-  const paymentList = new PaymentList(payments)
-  return paymentList.filterBy(paymentType)
+  const rawPaymentList = JSON.parse(responseData)['money'] as Money[]
+  return new PaymentList(rawPaymentList)
 }
 
 /**
  * 公費または私費の総支払額を取得する
  */
 const fetchTotalPaidAmount = async (startDate: Dayjs, endDate: Dayjs, paymentType: PaymentType) => {
-  const paymentList = await fetchPaymentList(startDate, endDate, paymentType)
+  const paymentList = await fetchPaymentList(startDate, endDate)
   return paymentList.totalAmount()
 }
 
@@ -62,7 +54,7 @@ export const fetchDailyPaymentAmounts = async (
   endDate: Dayjs,
   paymentType: PaymentType
 ) => {
-  const paymentList = await fetchPaymentList(startDate, endDate, paymentType)
+  const paymentList = await fetchPaymentList(startDate, endDate)
   const amountsByDate = paymentList.amountsByDate(startDate, endDate)
   return {
     days: Object.keys(amountsByDate),

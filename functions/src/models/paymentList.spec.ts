@@ -24,26 +24,32 @@ const createMoney = () => ({
 describe('filterBy', () => {
   const paymentList = new PaymentList([
     { ...createMoney(), id: 1, comment: '食費 私費' },
-    { ...createMoney(), id: 2, comment: '私費 自販機' },
-    { ...createMoney(), id: 3, comment: '公費 外食' },
-    { ...createMoney(), id: 4, comment: '参考書 公費' },
+    { ...createMoney(), id: 2, comment: '私費 食費' },
+    { ...createMoney(), id: 3, comment: '食費 私費 食費' },
+    { ...createMoney(), id: 4, comment: 'キャリーオーバー 私費' },
     { ...createMoney(), id: 5, comment: '私費 キャリーオーバー' },
-    { ...createMoney(), id: 6, comment: 'キャリーオーバー私費' }
+    { ...createMoney(), id: 6, comment: '小遣い キャリーオーバー 私費' },
+    { ...createMoney(), id: 7, comment: '食費 公費' },
+    { ...createMoney(), id: 8, comment: '食費 公費 食費' },
+    { ...createMoney(), id: 9, comment: '公費 食費' }
   ])
   describe('私費で絞り込む', () => {
     test('キャリーオーバーを除く私費のみのオブジェクトが返ってくる', () => {
       const filteredPaymentList = paymentList.filterBy('private')
-      expect(filteredPaymentList.payments.length).toBe(2)
+
+      expect(filteredPaymentList.payments.length).toBe(3)
       expect(filteredPaymentList.payments[0].id).toBe(1)
       expect(filteredPaymentList.payments[1].id).toBe(2)
+      expect(filteredPaymentList.payments[2].id).toBe(3)
     })
   })
   describe('公費で絞り込む', () => {
     test('公費のみのオブジェクトが返ってくる', () => {
       const filteredPaymentList = paymentList.filterBy('public')
-      expect(filteredPaymentList.payments.length).toBe(2)
-      expect(filteredPaymentList.payments[0].id).toBe(3)
-      expect(filteredPaymentList.payments[1].id).toBe(4)
+      expect(filteredPaymentList.payments.length).toBe(3)
+      expect(filteredPaymentList.payments[0].id).toBe(7)
+      expect(filteredPaymentList.payments[1].id).toBe(8)
+      expect(filteredPaymentList.payments[2].id).toBe(9)
     })
   })
 })

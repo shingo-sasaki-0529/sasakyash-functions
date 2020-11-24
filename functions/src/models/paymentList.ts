@@ -10,11 +10,13 @@ export class PaymentList {
    */
   filterBy(type: PaymentType) {
     const paymentTypeComment = type === 'private' ? '私費' : '公費'
-    return new PaymentList(
+    const filteredPaymentList = new PaymentList(
       this.payments.filter(payment => {
         return payment.comment.indexOf(paymentTypeComment) >= 0
       })
     )
+
+    return type === 'public' ? filteredPaymentList : filteredPaymentList.excludeCarryOverPayment()
   }
 
   /**
@@ -38,5 +40,16 @@ export class PaymentList {
       }
     })
     return amountTable
+  }
+
+  /**
+   * キャリーオーバー用途の支出を取り除く
+   */
+  private excludeCarryOverPayment() {
+    return new PaymentList(
+      this.payments.filter(payment => {
+        return payment.comment.indexOf('キャリーオーバー') === -1
+      })
+    )
   }
 }

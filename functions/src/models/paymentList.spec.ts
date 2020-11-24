@@ -26,10 +26,12 @@ describe('filterBy', () => {
     { ...createMoney(), id: 1, comment: '食費 私費' },
     { ...createMoney(), id: 2, comment: '私費 自販機' },
     { ...createMoney(), id: 3, comment: '公費 外食' },
-    { ...createMoney(), id: 4, comment: '参考書 公費' }
+    { ...createMoney(), id: 4, comment: '参考書 公費' },
+    { ...createMoney(), id: 5, comment: '私費 キャリーオーバー' },
+    { ...createMoney(), id: 6, comment: 'キャリーオーバー私費' }
   ])
   describe('私費で絞り込む', () => {
-    test('私費のみのオブジェクトが返ってくる', () => {
+    test('キャリーオーバーを除く私費のみのオブジェクトが返ってくる', () => {
       const filteredPaymentList = paymentList.filterBy('private')
       expect(filteredPaymentList.payments.length).toBe(2)
       expect(filteredPaymentList.payments[0].id).toBe(1)

@@ -15,5 +15,9 @@ jobs:
         node-version: '12'
     - name: Install Dependencies
       run: yarn install
+    - name: Run unit tests
+      run: |
+        cd functions/
+        yarn test
     - name: Build and deploy
       run: yarn firebase deploy --only functions --token=${{ secrets.FIREBASE_TOKEN }}

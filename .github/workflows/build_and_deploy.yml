@@ -15,6 +15,8 @@ jobs:
         node-version: '12'
     - name: Install Dependencies for firebase-tool
       run: yarn install
+    - name: Build and deploy
+      run: yarn deploy --only functions --token=${{ secrets.FIREBASE_TOKEN }}
     - name: Install Dependencies for functions
       run: |
         cd functions/
@@ -23,7 +25,3 @@ jobs:
       run: |
         cd functions/
         yarn test
-    - name: Build and deploy
-      run: |
-        cd functions/
-        yarn deploy --only functions --token=${{ secrets.FIREBASE_TOKEN }}

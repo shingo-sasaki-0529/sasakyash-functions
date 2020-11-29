@@ -24,4 +24,6 @@ jobs:
         cd functions/
         yarn test
     - name: Build and deploy
-      run: yarn firebase deploy --only functions --token=${{ secrets.FIREBASE_TOKEN }}
+      run: |
+        cd functions/
+        yarn deploy --only functions --token=${{ secrets.FIREBASE_TOKEN }}

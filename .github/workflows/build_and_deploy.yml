@@ -1,0 +1,19 @@
+name: "Build and Deploy"
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12'
+    - name: Install Dependencies
+      run: yarn install
+    - name: Build and deploy
+      run: firebase deploy --only functions --token=${{ secrets.FIREBASE_TOKEN }}

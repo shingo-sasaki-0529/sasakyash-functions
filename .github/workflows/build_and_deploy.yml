@@ -13,12 +13,15 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: '12'
-    - name: Install Dependencies
+    - name: Install Dependencies for firebase-tool
       run: yarn install
-    - name: Run unit tests
+    - name: Install Dependencies for functions
       run: |
         cd functions/
         yarn install
+    - name: Run unit tests
+      run: |
+        cd functions/
         yarn test
     - name: Build and deploy
       run: yarn firebase deploy --only functions --token=${{ secrets.FIREBASE_TOKEN }}

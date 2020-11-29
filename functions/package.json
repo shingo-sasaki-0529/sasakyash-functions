@@ -2,7 +2,7 @@
   "name": "functions",
   "private": true,
   "scripts": {
-    "lint": "eslint \"src/**/*\"",
+    "lint": "yarn eslint \"src/**/*\"",
     "build": "tsc",
     "watch": "tsc --watch",
     "test": "yarn jest --verbose",

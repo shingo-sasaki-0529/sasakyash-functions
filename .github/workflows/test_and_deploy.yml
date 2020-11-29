@@ -1,4 +1,4 @@
-name: "Build and Deploy"
+name: "Test and Deploy"
 on:
   push:
     branches:
@@ -13,11 +13,17 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: '12'
-    - name: Install Dependencies
+    - name: Install Dependencies for firebase-tool
       run: yarn install
+    - name: Install Dependencies for functions
+      run: |
+        cd functions/
+        yarn install
     - name: Run unit tests
       run: |
         cd functions/
         yarn test
-    - name: Build and deploy
-      run: yarn firebase deploy --only functions --token=${{ secrets.FIREBASE_TOKEN }}
+    - name: Deploy
+      run: |
+        cd functions/
+        yarn deploy --only functions --token=${{ secrets.FIREBASE_TOKEN }}
